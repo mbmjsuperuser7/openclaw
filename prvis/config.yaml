@@ -1,0 +1,47 @@
+# prvis-ai OpenClaw configuration
+# Stripped to: Telegram, WhatsApp, Slack, Signal + Ollama + Webhooks + SearXNG
+# All messages route to brain-gateway /webhook
+
+channels:
+  telegram:
+    enabled: true
+    token: ${TELEGRAM_BOT_TOKEN}
+
+  whatsapp:
+    enabled: true
+    bridge: baileys
+
+  slack:
+    enabled: true
+    botToken: ${SLACK_BOT_TOKEN}
+    appToken: ${SLACK_APP_TOKEN}
+
+  signal:
+    enabled: true
+    phoneNumber: ${SIGNAL_PHONE_NUMBER}
+
+# Route all messages to brain-gateway
+webhook:
+  enabled: true
+  url: http://brain-gateway:9090/webhook
+  secret: ${OPENCLAW_WEBHOOK_SECRET}
+  passthrough: true
+
+# LLM backend - Ollama local
+llm:
+  provider: ollama
+  baseUrl: http://host-gateway:11434
+  model: ${BRAIN_MODEL:-devstral:24b}
+
+# Search
+search:
+  provider: searxng
+  url: http://searxng:8080
+
+# Disabled channels
+discord:    { enabled: false }
+imessage:   { enabled: false }
+teams:      { enabled: false }
+matrix:     { enabled: false }
+zalo:       { enabled: false }
+webchat:    { enabled: false }

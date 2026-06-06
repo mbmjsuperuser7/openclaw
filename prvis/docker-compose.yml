@@ -1,0 +1,37 @@
+# prvis-ai — OpenClaw communication gateway
+# Stripped to Telegram + WhatsApp + Slack + Signal
+# All messages route to brain-gateway
+
+version: "3.8"
+services:
+  openclaw:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: openclaw
+    restart: unless-stopped
+    ports:
+      - "18789:18789"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN:-}
+      - SIGNAL_PHONE_NUMBER=${SIGNAL_PHONE_NUMBER:-}
+      - OPENCLAW_WEBHOOK_SECRET=${OPENCLAW_WEBHOOK_SECRET:-changeme}
+      - BRAIN_MODEL=${BRAIN_MODEL:-devstral:24b}
+      - DATABASE_URL=postgresql://prvis:${POSTGRES_PASSWORD:-changeme}@pgbouncer:5432/openclaw
+    volumes:
+      - ./config.yaml:/app/config/prvis.yaml:ro
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    networks:
+      - agent-network
+
+networks:
+  agent-network:
+    external: true
