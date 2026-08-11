@@ -1,0 +1,10 @@
+{
+  "name": "@openclaw/reef-bridge",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@openclaw/plugin-sdk": "workspace:*",
+    "typebox": "1.3.6"
+  }
+}

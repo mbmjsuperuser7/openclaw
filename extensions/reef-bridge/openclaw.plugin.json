@@ -1,0 +1,8 @@
+{
+  "id": "reef-bridge",
+  "name": "Reef Bridge",
+  "description": "Exposes git_operate and ssh_execute as real agent tools, calling reef-credbroker directly -- the credential broker performs the actual git/SSH operation itself; the raw credential never crosses into this process.",
+  "activation": {
+    "onStartup": true
+  }
+}
