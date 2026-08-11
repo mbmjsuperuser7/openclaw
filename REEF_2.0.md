@@ -84,7 +84,29 @@ requirements and does NOT exist in OpenClaw at all:**
    thoroughly -- THEN, and only then, is shutting down the old Reef
    even considered, as an explicit, separate, later decision.
 
-## Current status (as of this writing)
+## Validated deployment command (real, traced through the actual source)
+
+OpenClaw ships an OFFICIAL dev-mode bootstrap (`src/cli/gateway-cli/dev.ts`) --
+not something invented for this project. Setting `OPENCLAW_PROFILE=dev` makes
+it auto-seed a loopback-only config with an isolated workspace directory
+(suffixed `-dev`), exactly matching the "separate folder, don't touch
+production" requirement using OpenClaw's own reliable mechanism rather than a
+bespoke config.
+
+`--port <number>` is a real, working CLI flag (traced to
+`src/cli/gateway-port-option.ts`, accepts any valid TCP port 1-65535).
+
+On reef, once Node >=22.22.3 and `pnpm install` are confirmed working in
+/home/vikas/openclaw-dev/:
+
+```bash
+cd /home/vikas/openclaw-dev
+OPENCLAW_PROFILE=dev node ./openclaw.mjs gateway run --port 18789
+```
+
+(entrypoint confirmed directly from package.json's "bin" field: "openclaw.mjs")
+
+
 
 - Fresh OpenClaw base pushed to `mbmjsuperuser7/openclaw` (`main`,
   single clean commit, current as of tonight). Needs a `dev` branch
