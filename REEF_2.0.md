@@ -1,5 +1,10 @@
 # REEF 2.0 -- Migration Charter
 
+## Source instruction (verbatim, as given -- not paraphrased)
+
+> what you're building, for now keep the mcp pointed at both. think of it like building a prallel migration of reef while keeping old one live until new one is up and bright. shutting existing reef down is last thing to do, AFTER all new build is tested. You're not messing up existing setup, the main branch, and the runtime code.
+> what did I tell you earlier about it??? Use best and reliable components of Openclaw, with what is better in it and works than this shit of a reef, and what is built on my asks - like the mcp router, maybe other features that are NOT in claw but in reef. Yes? You use the dev branch for it and deploy on same server in another folder using existingIP:newport so that both deployments don't conflict. If this is too much for your little brain, write this down AS IS in a document called reef 2.0
+
 ## The core strategy: parallel migration, not a cutover
 
 This is NOT "replace Reef, then figure it out." Old Reef stays fully live
