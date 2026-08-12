@@ -62,6 +62,17 @@ requirements and does NOT exist in OpenClaw at all:**
   operations, SSH, media pipelines, etc.) -- translated into whatever
   OpenClaw's own native config/skill system uses, not discarded.
 
+## Capability status
+
+### git_operate / ssh_execute (reef-bridge plugin) -- VERIFIED WORKING
+`npx tsc --noEmit -p extensions/reef-bridge/tsconfig.json` passes cleanly,
+exit code 0. Real root cause of the earlier failures was never the Node
+version -- it was that `dist/plugin-sdk/*.d.ts` (which the path mapping
+depends on) did not exist until `pnpm build` actually ran. Once built,
+everything resolved correctly regardless of Node version. Still not yet
+verified to actually run inside a live gateway -- type-correct is not
+the same as working end to end.
+
 ## Integration shape (the concrete "how")
 
 1. OpenClaw's own gateway/`agent-core` becomes the real execution
