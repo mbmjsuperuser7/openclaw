@@ -1,4 +1,4 @@
-// REEF 2.0 agent configuration -- coder + verifier, per the charter.
+// Agent configuration -- two agents, real tool scoping, real model/server.
 // Deploy with: OPENCLAW_CONFIG_PATH=<this file> OPENCLAW_PROFILE=dev
 //              node ./openclaw.mjs gateway run --port 18789
 {
