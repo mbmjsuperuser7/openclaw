@@ -2,6 +2,13 @@
 // Deploy with: OPENCLAW_CONFIG_PATH=<this file> OPENCLAW_PROFILE=dev
 //              node ./openclaw.mjs gateway run --port 18789
 {
+  // Explicit LAN bind -- without this, the gateway may default to
+  // loopback-only, unreachable from anywhere except reef itself. Confirmed
+  // via src/cli/gateway-cli/run.ts: "lan" binds 0.0.0.0, exactly matching
+  // the charter's "same server, same IP, different port" requirement.
+  gateway: {
+    bind: "lan",
+  },
   // Real Ollama server -- NOT local. discovery.enabled only finds ambient
   // LOCAL models by default; this machine's Ollama is remote (alpha-ai,
   // 192.168.1.9), matching Reef 1.0's own models.yaml exactly.
