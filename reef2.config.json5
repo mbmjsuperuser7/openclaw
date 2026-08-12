@@ -2,8 +2,23 @@
 // Deploy with: OPENCLAW_CONFIG_PATH=<this file> OPENCLAW_PROFILE=dev
 //              node ./openclaw.mjs gateway run --port 18789
 {
+  // Real Ollama server -- NOT local. discovery.enabled only finds ambient
+  // LOCAL models by default; this machine's Ollama is remote (alpha-ai,
+  // 192.168.1.9), matching Reef 1.0's own models.yaml exactly.
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://192.168.1.9:11434",
+      },
+    },
+  },
   agents: {
     defaults: {
+      // Same model Reef 1.0 already runs -- confirmed real via ollama ps
+      // during tonight's GPU work.
+      model: {
+        primary: "ollama/qwen3:30b-a3b",
+      },
       // Confirmed via docs/gateway/config-tools.md: tool-loop safety
       // checks are DISABLED by default in OpenClaw. This is the entire
       // reason for adopting agent-core in the first place -- explicitly
