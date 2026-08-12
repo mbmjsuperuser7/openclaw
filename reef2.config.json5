@@ -1,0 +1,48 @@
+// REEF 2.0 agent configuration -- coder + verifier, per the charter.
+// Deploy with: OPENCLAW_CONFIG_PATH=<this file> OPENCLAW_PROFILE=dev
+//              node ./openclaw.mjs gateway run --port 18789
+{
+  agents: {
+    defaults: {
+      // Confirmed via docs/gateway/config-tools.md: tool-loop safety
+      // checks are DISABLED by default in OpenClaw. This is the entire
+      // reason for adopting agent-core in the first place -- explicitly
+      // turning it on, not assuming it's already active.
+      tools: {
+        loopDetection: { enabled: true },
+      },
+    },
+    entries: {
+      // Agent 1: does real work -- clone/build/run OpenClaw itself,
+      // git operations via reef-bridge, general coding tasks. Direct
+      // equivalent of Reef 1.0's "coder" role.
+      coder: {
+        default: true,
+        skills: ["github"],
+        tools: {
+          // group:fs and group:runtime are OpenClaw's own built-in tool
+          // groups (file read/write, exec/process) -- coder needs real
+          // work capability. git_operate/ssh_execute come from the
+          // reef-bridge plugin built earlier.
+          allow: ["group:fs", "group:runtime", "git_operate", "ssh_execute"],
+        },
+      },
+
+      // Agent 2: verifies work -- deliberately narrower. Can run
+      // git_operate/ssh_execute to check real state (status, log, a
+      // read-only remote command) and read files, but cannot write code
+      // or execute arbitrary processes. This is the agent that
+      // confirms coder's work is real, not the one doing the work.
+      verifier: {
+        skills: ["github"],
+        tools: {
+          // ssh_execute deliberately excluded -- unlike git_operate's
+          // structured "operation" field, arbitrary shell commands have
+          // no reliable read-only classification at the tool level.
+          allow: ["read", "ls", "git_operate_readonly"],
+          deny: ["write", "edit", "apply_patch", "exec", "process", "git_operate", "ssh_execute"],
+        },
+      },
+    },
+  },
+}

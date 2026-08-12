@@ -104,12 +104,40 @@ const sshExecuteTool: AnyAgentTool = {
   },
 };
 
+const READ_ONLY_GIT_OPS = new Set(["status", "log", "diff", "fetch", "pull"]);
+
+const gitOperateReadonlyTool: AnyAgentTool = {
+  name: "git_operate_readonly",
+  label: "Git Operate (read-only)",
+  description:
+    "Same as git_operate, but hard-restricted in code to read-only operations " +
+    "(status, log, diff, fetch, pull) -- refuses commit/push/branch/tag/clone " +
+    "regardless of what's asked. For agents that verify work, not perform it.",
+  parameters: GitOperateParams,
+  async execute(_toolCallId: string, params: unknown) {
+    const typed = params as { operation: string };
+    if (!READ_ONLY_GIT_OPS.has(typed.operation)) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `[git_operate_readonly refused: '${typed.operation}' is not a read-only operation -- allowed: ${Array.from(READ_ONLY_GIT_OPS).join(", ")}]`,
+          },
+        ],
+        details: { refused: true, operation: typed.operation },
+      };
+    }
+    return gitOperateTool.execute(_toolCallId, params);
+  },
+};
+
 export default definePluginEntry({
   id: "reef-bridge",
   name: "Reef Bridge",
   description: "Exposes git_operate and ssh_execute, calling reef-credbroker directly.",
   register(api) {
     api.registerTool(gitOperateTool);
+    api.registerTool(gitOperateReadonlyTool);
     api.registerTool(sshExecuteTool);
   },
 });
