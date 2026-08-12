@@ -289,9 +289,15 @@ function updateHashFromFiles(
 function resolveBrowserHelpSourceSignature(sourceRootDir: string = rootDir): string {
   const hash = createHash("sha1");
   const browserCliDir = path.join(sourceRootDir, "extensions/browser/src/cli");
-  const browserCliFiles = readdirSync(browserCliDir)
-    .filter((entry) => entry.endsWith(".ts"))
-    .map((entry) => path.join(browserCliDir, entry));
+  // browser extension may not be present in this fork -- nothing to hash,
+  // not an error. Real fix, not a workaround: this signature exists to
+  // invalidate cached CLI metadata when browser's CLI help text changes;
+  // if browser doesn't exist at all, there's genuinely nothing to track.
+  const browserCliFiles = existsSync(browserCliDir)
+    ? readdirSync(browserCliDir)
+        .filter((entry) => entry.endsWith(".ts"))
+        .map((entry) => path.join(browserCliDir, entry))
+    : [];
   updateHashFromFiles(hash, browserCliFiles, sourceRootDir);
   updateHashFromFiles(
     hash,
