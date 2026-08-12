@@ -326,12 +326,6 @@ function buildCoreDistEntries(): Record<string, string> {
     "plugins/sdk-alias": "src/plugins/sdk-alias.ts",
     "facade-activation-check.runtime": "src/plugin-sdk/facade-activation-check.runtime.ts",
     "infra/warning-filter": "src/infra/warning-filter.ts",
-    "telegram-ingress-worker.runtime": bundledPluginFile(
-      "telegram",
-      "src/telegram-ingress-worker.runtime.ts",
-    ),
-    "telegram/audit": bundledPluginFile("telegram", "src/audit.ts"),
-    "telegram/token": bundledPluginFile("telegram", "src/token.ts"),
     "plugins/build-smoke-entry": "src/plugins/build-smoke-entry.ts",
     "plugins/runtime/index": "src/plugins/runtime/index.ts",
     "llm-slug-generator": "src/hooks/llm-slug-generator.ts",
@@ -527,7 +521,6 @@ function buildUnifiedDistEntries(): Record<string, string> {
     "memory-core-local-embedding-worker":
       "packages/memory-host-sdk/src/host/embeddings-worker-child.ts",
     ...listBundledPluginEntrySources(rootBundledPluginBuildEntries),
-    "extensions/browser/native-host-entry": "extensions/browser/native-host-entry.ts",
     ...bundledHookEntries,
   };
 }
