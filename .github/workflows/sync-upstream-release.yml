@@ -1,0 +1,41 @@
+name: Sync fork to latest OpenClaw release
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync-to-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check latest upstream release, skip if already synced
+        id: check
+        run: |
+          LATEST_TAG=$(gh api repos/openclaw/openclaw/releases/latest --jq .tag_name)
+          echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+          if git ls-remote --tags https://github.com/${{ github.repository }}.git | grep -q "refs/tags/synced-$LATEST_TAG$"; then
+            echo "already_synced=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_synced=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone the release tag, strip workflows, push
+        if: steps.check.outputs.already_synced == 'false'
+        run: |
+          git clone --branch ${{ steps.check.outputs.latest_tag }} --depth 1 https://github.com/openclaw/openclaw.git source
+          cd source
+          rm -rf .github/workflows
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add -A
+          git commit -m "Sync to OpenClaw release ${{ steps.check.outputs.latest_tag }} -- workflows excluded"
+          git remote add target https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push target HEAD:main --force
+          git tag "synced-${{ steps.check.outputs.latest_tag }}"
+          git push target "synced-${{ steps.check.outputs.latest_tag }}"
